@@ -53,7 +53,10 @@ export function unstable_cache<T extends Callback>(
         ...store,
         fetchCache: 'only-no-store',
         urlPathname: store?.urlPathname || '/',
-        isStaticGeneration: !!store?.isStaticGeneration,
+        isStaticGeneration: store?.isStaticGeneration === true,
+        experimental: {
+          ppr: store?.experimental?.ppr === true,
+        },
       },
       async () => {
         const tags = validateTags(

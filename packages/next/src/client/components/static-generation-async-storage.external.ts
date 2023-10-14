@@ -41,6 +41,10 @@ export interface StaticGenerationStore {
   fetchMetrics?: FetchMetrics
 
   isDraftMode?: boolean
+
+  readonly experimental: {
+    readonly ppr: boolean
+  }
 }
 
 export type StaticGenerationAsyncStorage =

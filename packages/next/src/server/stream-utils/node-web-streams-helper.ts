@@ -34,7 +34,7 @@ export function cloneTransformStream(source: TransformStream) {
 }
 
 export function chainStreams<T>(
-  streams: ReadableStream<T>[]
+  ...streams: ReadableStream<T>[]
 ): ReadableStream<T> {
   const { readable, writable } = new TransformStream()
 
@@ -399,7 +399,9 @@ export async function continueFizzStream(
   // Suffix itself might contain close tags at the end, so we need to split it.
   const suffixUnclosed = suffix ? suffix.split(closeTag)[0] : null
 
-  if (generateStaticHTML) {
+  // If we're generating static HTML and there's an `allReady` promise on the
+  // stream, we need to wait for it to resolve before continuing.
+  if (generateStaticHTML && 'allReady' in renderStream) {
     await renderStream.allReady
   }
 
@@ -421,7 +423,7 @@ export async function continueFizzStream(
     inlinedDataStream ? createMergedTransformStream(inlinedDataStream) : null,
 
     // Close tags should always be deferred to the end
-    closeTag && createMoveSuffixStream(closeTag),
+    createMoveSuffixStream(closeTag),
 
     // Special head insertions
     // TODO-APP: Insert server side html to end of head in app layout rendering, to avoid
